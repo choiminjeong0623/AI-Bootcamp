@@ -1,0 +1,10 @@
+name = input("이름을 입력하세요 : ")
+age = input("나이를 입력하세요 : ")
+dream = input("꿈을 입력하세요 :")
+
+print()
+print("==== 자기소개 ====")
+print("안녕하세요.")
+print("제 이름은", name, "입니다.")
+print("제 나이는", age, "살 입니다.")
+print("저의 목표는 ", dream, "입니다.")
