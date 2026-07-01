@@ -11,9 +11,9 @@ def divide(a, b):
     if b == 0:
         return "0으로 나눌 수 없습니다."
     else:
-        return int(a / b)
+        return a / b
 
-def modular(a, b):
+def modulo(a, b):
     if b == 0:
         return "0으로 나눌 수 없습니다."
     else :
@@ -36,5 +36,5 @@ print("multiply 함수의 결과 : ", multiply(num1, num2))
 ressultDivide = divide(num1, num2)
 print("divide 함수의 결과 : ", divide(num1, num2))
 
-resultModular = modular(num1, num2)
-print("modular 함수의 결과 : ", modular(num1, num2))
+resultModulo = modulo(num1, num2)
+print("modulo 함수의 결과 : ", modulo(num1, num2))
