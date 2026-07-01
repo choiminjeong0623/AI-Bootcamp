@@ -177,11 +177,21 @@ if sentence:
     
     # GPT 호출
     with st.spinner("GPT가 응답을 생성하는 중입니다..."):
-        answer, corrected_sentence = get_gpt_response(sentence, prompt)
+        answer, corrected_sentence, parsed = get_gpt_response(sentence, prompt)
     
     # AI 출력
     with st.chat_message("assistant"):
-        st.markdown(answer)
+        # st.markdown(answer)
+        with st.container():
+
+            st.success("교정 문장")
+            st.write(parsed["corrected_answer"])
+            st.info("수정 이유")
+            st.write(parsed["reason"])
+            st.success("🇰🇷 한국어 번역")
+            st.write(parsed["translation"])
+            st.warning("더 좋은 표현")
+            st.write(parsed["better"])
 
         if corrected_sentence:
             st.success(f"교정 문장\n\n{corrected_sentence}")

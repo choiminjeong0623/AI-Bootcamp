@@ -53,8 +53,9 @@ def get_gpt_response(sentence, prompt):
 
     answer = response.output_text
     corrected_sentence = get_corrected_sentence(answer)
+    parsed = parse_answer(answer)
 
-    return answer, corrected_sentence
+    return answer, corrected_sentence, parsed
 
 ## GPT 응답에서 수정된 문장만 추출
 def get_corrected_sentence(answer):
@@ -71,3 +72,37 @@ def get_corrected_sentence(answer):
     # print(lines)
 
     return lines[1]
+
+def parse_answer(answer):
+    result = {
+        "corrected_answer" : "",
+        "reason" : "",
+        "translation" : "",
+        "better" : ""
+    }
+
+    current = None
+
+    for line in answer.split("\n"):
+        line = line.strip()
+
+        if not line:
+            continue
+
+        if "[수정된 문장]" in line:
+            current = "corrected_answer"
+            continue
+        elif "[수정 이유]" in line:
+            current = "reason"
+            continue
+        elif "[한국어 번역]" in line:
+            current = "translation"
+            continue
+        elif "[더 좋은 표현]" in line:
+            current = "better"
+            continue
+        
+        if current:
+            result[current] += line + "\n"
+    
+    return result
