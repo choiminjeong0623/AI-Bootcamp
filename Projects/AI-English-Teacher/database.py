@@ -54,13 +54,19 @@ def get_recent_conversations(limit=5):
 
     cursor.execute(
         """
-        SELECT * FROM conversation ORDER BY created_at DESC LIMIT ?
+        SELECT
+            id,
+            question,
+            created_at
+        FROM conversation
+        ORDER BY id DESC
+        LIMIT ?
         """,
         (limit,)
     )
-    conversations = cursor.fetchall()
+    rows  = cursor.fetchall()
     connection.close()
-    return conversations
+    return rows 
 
 ## 가져온 대화를 화면에 출력하는 함수
 def show_recent_conversations(limit=5):
@@ -112,6 +118,7 @@ def search_conversations(keyword):
             id,
             question,
             answer,
+            corrected_sentence,
             created_at
         FROM conversation
         WHERE question LIKE ?
