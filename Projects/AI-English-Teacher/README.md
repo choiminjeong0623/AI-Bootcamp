@@ -9,4 +9,4 @@ Features
 ✔ Conversation Memory
 ✔ Dashboard
 ✔ Search
-✔ AI English Analysis
+✔ AI English Analysis 
