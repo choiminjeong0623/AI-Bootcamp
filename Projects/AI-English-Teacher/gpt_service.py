@@ -70,4 +70,4 @@ def get_corrected_sentence(answer):
     # print("===== lines =====")
     # print(lines)
 
-    return lines[0]
+    return lines[1]
