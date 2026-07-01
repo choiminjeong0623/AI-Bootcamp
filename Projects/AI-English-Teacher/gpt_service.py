@@ -18,14 +18,14 @@ client = OpenAI(
 def get_gpt_response(sentence, prompt):
 
     if prompt == CORRECTION_PROMPT:
-        corrected_sentence = CORRECTION_PROMPT
+        prompt = CORRECTION_PROMPT
     else:
-        corrected_sentence = CHAT_PROMPT
+        prompt = CHAT_PROMPT
         
     messages = [
         {
             "role" : "system",
-            "content" : corrected_sentence
+            "content" : prompt
         }
     ]
 
@@ -52,33 +52,37 @@ def get_gpt_response(sentence, prompt):
     # pprint(response)
 
     answer = response.output_text
-    corrected_sentence = get_corrected_sentence(answer)
+    # corrected_sentence = get_corrected_sentence(answer)
     parsed = parse_answer(answer)
 
-    return answer, corrected_sentence, parsed
+    return answer, parsed
 
 ## GPT 응답에서 수정된 문장만 추출
-def get_corrected_sentence(answer):
-    # print("===== answer =====")
-    # print(answer)
+# def get_corrected_sentence(answer):
+#     # print("===== answer =====")
+#     # print(answer)
 
-    lines = [
-        line.strip()
-        for line in answer.split("\n")
-        if line.strip()
-    ]
+#     lines = [
+#         line.strip()
+#         for line in answer.split("\n")
+#         if line.strip()
+#     ]
 
-    # print("===== lines =====")
-    # print(lines)
+#     print("===== lines =====")
+#     print(lines)
 
-    return lines[1]
+#     return lines[1]
 
 def parse_answer(answer):
     result = {
-        "corrected_answer" : "",
+        "corrected" : "",
         "reason" : "",
         "translation" : "",
-        "better" : ""
+        "better" : "",
+        "grammar": "",
+        "vocabulary": "",
+        "naturalness": "",
+        "level": ""
     }
 
     current = None
@@ -90,7 +94,7 @@ def parse_answer(answer):
             continue
 
         if "[수정된 문장]" in line:
-            current = "corrected_answer"
+            current = "corrected"
             continue
         elif "[수정 이유]" in line:
             current = "reason"
@@ -101,7 +105,21 @@ def parse_answer(answer):
         elif "[더 좋은 표현]" in line:
             current = "better"
             continue
+        elif "[AI 분석]" in line:
+            current = "analysis"
+            continue
         
+        if current == "analysis":
+            if line.startswith("Grammar"):
+                result["grammar"] = line.split(":")[1].strip()
+            elif line.startswith("Vocabulary"):
+                result["vocabulary"] = line.split(":")[1].strip()
+            elif line.startswith("Naturalness"):
+                result["naturalness"] = line.split(":")[1].strip()
+            elif line.startswith("Level"):
+                result["level"] = line.split(":")[1].strip()
+            continue
+            
         if current:
             result[current] += line + "\n"
     

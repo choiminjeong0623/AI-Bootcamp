@@ -1,10 +1,4 @@
 import streamlit as st
-from datetime import datetime
-from gpt_service import get_gpt_response
-from prompt import (
-    CHAT_PROMPT,
-    CORRECTION_PROMPT
-)
 from database import (
     create_database,
     save_conversation,
@@ -15,7 +9,15 @@ from database import (
     export_conversations,
     delete_all_conversation
 )
-
+from ui import (
+    show_title,
+    show_gpt_card
+)
+from chat_manager import process_chat
+from prompt import (
+    CHAT_PROMPT,
+    CORRECTION_PROMPT
+)
 # ------------------------
 # Sidebar - 최근 학습
 # ------------------------
@@ -56,14 +58,14 @@ from database import (
 
 #                 st.caption(f"시간 : {row[3]}")
 
-# # ------------------------
-# # 통계
-# # ------------------------
-# statics = get_statistics()
-# st.sidebar.divider()
-# st.sidebar.subheader("통계")
-# st.sidebar.metric("총 질문", statics[0])
-# st.sidebar.write(f"최근 학습 : {statics[1] if statics[1] else '없음'}")
+# ------------------------
+# 통계
+# ------------------------
+statics = get_statistics()
+st.sidebar.divider()
+st.sidebar.subheader("통계")
+st.sidebar.metric("총 질문", statics[0])
+st.sidebar.write(f"최근 학습 : {statics[1] if statics[1] else '없음'}")
 
 
 # ------------------------
@@ -89,21 +91,8 @@ st.set_page_config(
     page_icon="🤖",
     layout="wide"
 )
-st.title("AI English Teacher")
-st.write("영어 문장을 입력하면 GPT가 교정해줍니다. 질문을 입력하면 GPT가 답변해줍니다.")
 
-st.sidebar.title("Dashboard")
-
-total_count, last_date = get_statistics()
-
-st.sidebar.metric(
-    "총 질문", total_count
-)
-st.sidebar.caption(
-    f"최근 학습\n{last_date}"
-)
-st.sidebar.divider()
-
+show_title()
 # --------------------------------
 # 전체 삭제
 # --------------------------------
@@ -153,7 +142,7 @@ for message in st.session_state.messages:
 # --------------------------
 # 입력창
 # --------------------------
-sentence = st.chat_input("영어 문장을 입력하세요.", height=150)
+sentence = st.chat_input("영어 문장을 입력하세요.")
 
 # --------------------------------
 # 질문이 들어왔을 때
@@ -169,32 +158,15 @@ if sentence:
     with st.chat_message("user"):
         st.markdown(sentence)
     
-    # 질문 종류 판단
-    if sentence.strip().endswith("?"):
-        prompt = CHAT_PROMPT
-    else:
-        prompt = CORRECTION_PROMPT
-    
     # GPT 호출
     with st.spinner("GPT가 응답을 생성하는 중입니다..."):
-        answer, corrected_sentence, parsed = get_gpt_response(sentence, prompt)
+       answer, parsed = process_chat(sentence)
     
     # AI 출력
     with st.chat_message("assistant"):
         # st.markdown(answer)
         with st.container():
-
-            st.success("교정 문장")
-            st.write(parsed["corrected_answer"])
-            st.info("수정 이유")
-            st.write(parsed["reason"])
-            st.success("🇰🇷 한국어 번역")
-            st.write(parsed["translation"])
-            st.warning("더 좋은 표현")
-            st.write(parsed["better"])
-
-        if corrected_sentence:
-            st.success(f"교정 문장\n\n{corrected_sentence}")
+            show_gpt_card(parsed)
 
         # Session 저장
         st.session_state.messages.append(
@@ -202,21 +174,6 @@ if sentence:
                 "role" : "assistant",
                 "content" : answer
             }
-        )
-
-        # --------------------------
-        # 현재 시간
-        # --------------------------
-        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        # --------------------------
-        # SQLite 저장
-        # --------------------------
-        save_conversation(
-            sentence=sentence, 
-            answer=answer, 
-            corrected_sentence=corrected_sentence, 
-            time=time
         )
 
         st.success("학습 내용이 저장되었습니다.")

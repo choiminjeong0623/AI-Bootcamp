@@ -3,7 +3,7 @@ CORRECTION_PROMPT = """
 
 사용자의 영어 문장을 교정한다.
 
-항상 아래 형식으로 답한다.
+반드시 아래 형식으로 답변하세요.
 
 [수정된 문장]
 ...
@@ -16,8 +16,17 @@ CORRECTION_PROMPT = """
 
 [더 좋은 표현]
 ...
-"""
 
+[AI 분석]
+
+Grammar : 1~5
+
+Vocabulary : 1~5
+
+Naturalness : 1~5
+
+Level : A1~C2
+"""
 
 CHAT_PROMPT = """
 너는 친절한 영어 튜터이다.
