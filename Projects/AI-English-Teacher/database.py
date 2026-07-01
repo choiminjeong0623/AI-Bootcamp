@@ -15,7 +15,7 @@ def create_database():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         question TEXT NOT NULL,
         answer TEXT NOT NULL,
-        corrected_setence TEXT,
+        corrected_sentence TEXT,
         created_at TEXT NOT NULL
 
         )
@@ -101,6 +101,7 @@ def build_history(limit=5):
         })
     return history
 
+## 키워드 검색 함수.
 def search_conversations(keyword):
     connection = sqlite3.connect(DB_NAME)
     cursor = connection.cursor()
@@ -108,6 +109,7 @@ def search_conversations(keyword):
     cursor.execute(
         """
        SELECT
+            id,
             question,
             answer,
             created_at
@@ -115,10 +117,59 @@ def search_conversations(keyword):
         WHERE question LIKE ?
         ORDER BY id DESC
         """,
-        (f"%{keyword}%")
+        (f"%{keyword}%",)
     )
     
     rows = cursor.fetchall()
     connection.close()
 
     return rows
+
+## 통계 함수
+def get_statistics():
+    connection = sqlite3.connect(DB_NAME)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT 
+            COUNT(*)
+            , MAX(created_at)
+        FROM conversation
+        """
+    )
+
+    reuslt = cursor.fetchone()
+
+    if reuslt == (0, None):
+        total_count = 0
+        last_date = None
+    else:
+        total_count = reuslt[0]
+        last_date = reuslt[1]
+    
+    connection.close()
+
+    return total_count, last_date
+
+def get_conversation_by_id(id):
+    connection = sqlite3.connect(DB_NAME)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            question,
+            answer,
+            corrected_sentence,
+            created_at
+        FROM conversation
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    row = cursor.fetchone()
+    connection.close()
+
+    return row

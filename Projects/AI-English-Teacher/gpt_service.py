@@ -1,6 +1,6 @@
 from openai import OpenAI
 from dotenv import load_dotenv
-# from conversation import build_history
+from conversation import build_history
 from pprint import pprint
 from prompt import (
     CORRECTION_PROMPT,
