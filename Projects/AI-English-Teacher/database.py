@@ -180,3 +180,68 @@ def get_conversation_by_id(id):
     connection.close()
 
     return row
+
+def load_recent_messages(limit=20):
+    connection = sqlite3.connect(DB_NAME)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            question,
+            answer
+        FROM conversation
+        ORDER BY id DESC
+        LIMIT ?
+        """,
+        (limit,)
+    )
+
+    rows = cursor.fetchall()
+    connection.close()
+    rows.reverse()  # 최근 대화가 마지막에 오도록 순서 변경
+    
+    return rows
+
+## TXT 내보내기 함수
+def export_conversations():
+    connection = sqlite3.connect(DB_NAME)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+            SELECT
+                question,
+                answer,
+                created_at
+            FROM conversation
+            ORDER BY id ASC
+        """
+
+    )
+
+    rows = cursor.fetchall()
+    connection.close()
+
+    text = ""
+
+    for question, answer, created_at in rows:
+        text += f"Q : {question}\n"
+        text += f"A : {answer}\n"
+        text += f"[{created_at}]\n"
+        text += "-" * 60
+        text += "\n"
+
+    return text
+
+## 전체 삭제 함수
+def delete_all_conversation():
+    connection = sqlite3.connect(DB_NAME)
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "DELETE FROM conversation"
+    )
+
+    connection.commit()
+    connection.close()
