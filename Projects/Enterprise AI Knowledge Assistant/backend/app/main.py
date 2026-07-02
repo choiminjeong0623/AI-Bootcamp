@@ -11,7 +11,7 @@ app = FastAPI(
 )
 
 # ------------------------------------------------
-# FastAPI는 직적 등록
+# include_router : Router 등록
 # Spring에서는 Controller가 자동 등록
 # ------------------------------------------------
 app.include_router(chat_router)
