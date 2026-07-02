@@ -1,6 +1,13 @@
 from fastapi import FastAPI
 from app.api.chat import router as chat_router
 
+from app.database.database import Base
+from app.database.database import engine
+
+from app.models.conversation import Conversation
+
+Base.metadata.create_all(bind=engine)
+
 # ------------------------------------------------
 # 프로젝트 생성
 # Spring => @SpringBootApplication

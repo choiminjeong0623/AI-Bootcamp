@@ -1,62 +1,46 @@
-import json
-import os
+from sqlalchemy.orm import Session
 
-FILE_NAME = "conversation_log.json"
+from app.database.database import SessionLocal
+from app.models.conversation import Conversation
 
 
-def save_conversation(
-    sentence,
-    answer,
-    corrected_sentence,
-    time
-):
+class ConversationRepository:
 
-    data = load_conversations()
+    def __init__(self, db):
 
-    data.append(
-        {
-            "sentence": sentence,
-            "answer": answer,
-            "corrected_sentence": corrected_sentence,
-            "time": time
-        }
-    )
+        # self.db: Session = SessionLocal()
+        self.db = db
 
-    with open(
-        FILE_NAME,
-        "w",
-        encoding="utf-8"
-    ) as file:
+    def save(
+        self,
+        sentence,
+        answer,
+        corrected_sentence,
+        time
+    ):
+        ## Conversation : ORM 객체. SQL을 직접 작성하지 않는다.
+        conversation = Conversation(
 
-        json.dump(
-            data,
-            file,
-            ensure_ascii=False,
-            indent=4
+            sentence=sentence,
+
+            answer=answer,
+
+            corrected_sentence=corrected_sentence,
+
+            time=time
         )
 
+        self.db.add(conversation)
+        self.db.commit()
 
-def load_conversations():
+    def get_recent(
+        self,
+        limit=5
+    ):
 
-    if not os.path.exists(FILE_NAME):
-        return []
-
-    try:
-
-        with open(
-            FILE_NAME,
-            "r",
-            encoding="utf-8"
-        ) as file:
-
-            return json.load(file)
-
-    except json.JSONDecodeError:
-        return []
-
-
-def get_recent_conversations(limit=5):
-
-    conversations = load_conversations()
-
-    return conversations[-limit:]
+        return (
+            self.db.query(Conversation)
+            .order_by(Conversation.id.desc())
+            .limit(limit)
+            .all()
+        )

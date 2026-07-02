@@ -1,22 +1,20 @@
-Version 1.0
+## Backend Architecture
 
-Features
+API
+ ↓
+Service
+ ↓
+Repository
+ ↓
+Storage
 
-✔ OpenAI Responses API
-✔ Prompt Engineering
-✔ Streamlit UI
-✔ SQLite
-✔ Conversation Memory
-✔ Dashboard
-✔ Search
-✔ AI English Analysis
+### Repository
 
-Project Vision : Enterprise AI Knowledge Assistant
+- ConversationRepository
+- JSON Storage (Current)
 
-Current Mode
-✔ English Tutor
-Future Modes
-- Document QA
-- SQL Assistant
-- Manufacturing Assistant
-- Customer Support
+Future
+
+- SQLAlchemy
+- SQLite
+- Snowflake

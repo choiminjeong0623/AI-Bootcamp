@@ -1,27 +1,25 @@
-from app.repositories.conversation_repository import (
-    get_recent_conversations
-)
+from app.repositories.conversation_repository import ConversationRepository
 
-
-def build_history(limit=5):
+def build_history(db, limit=5):
 
     history = []
 
-    conversations = get_recent_conversations(limit)
+    repository = ConversationRepository(db)
+    conversations = repository.get_recent()
 
     for c in conversations:
 
         history.append(
             {
                 "role": "user",
-                "content": c["sentence"]
+                "content": c.sentence
             }
         )
 
         history.append(
             {
                 "role": "assistant",
-                "content": c["corrected_sentence"]
+                "content": c.corrected_sentence
             }
         )
 
