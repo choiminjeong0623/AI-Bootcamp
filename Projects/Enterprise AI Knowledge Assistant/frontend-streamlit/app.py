@@ -13,11 +13,17 @@ from ui import (
     show_title,
     show_gpt_card
 )
-from chat_manager import process_chat
+from services.english_service import process_english
 from prompt import (
     CHAT_PROMPT,
     CORRECTION_PROMPT
 )
+
+#######################################
+# 이름 : app 
+# 역할 : UI
+#######################################
+
 # ------------------------
 # Sidebar - 최근 학습
 # ------------------------
@@ -160,7 +166,7 @@ if sentence:
     
     # GPT 호출
     with st.spinner("GPT가 응답을 생성하는 중입니다..."):
-       answer, parsed = process_chat(sentence)
+       answer, parsed = process_english(sentence)
     
     # AI 출력
     with st.chat_message("assistant"):

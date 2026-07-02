@@ -9,4 +9,14 @@ Features
 ✔ Conversation Memory
 ✔ Dashboard
 ✔ Search
-✔ AI English Analysis 
+✔ AI English Analysis
+
+Project Vision : Enterprise AI Knowledge Assistant
+
+Current Mode
+✔ English Tutor
+Future Modes
+- Document QA
+- SQL Assistant
+- Manufacturing Assistant
+- Customer Support
