@@ -4,6 +4,7 @@ import os
 
 load_dotenv()
 
+## OpenAI SDK 역할 수행
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
